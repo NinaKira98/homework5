@@ -31,7 +31,8 @@ const myGame = function(badGuyNum, level) {
     isPaused: false
   };
   
-  const hero = {
+  const gameData = {
+    hero: {
       x: 50,
       y: floorY,
       img: bobo,
@@ -39,11 +40,16 @@ const myGame = function(badGuyNum, level) {
       height: 120,
       xD: 0,
       yD: 0
+    },
+    badArray: []
     };
+
+  const hero = gameData.hero;
+  const badArray = gameData.badArray;
   const maxJump = floorY - (hero.height * 2);
    
   const badGuys = function(count) {
-    const badArray = [];
+    
       const func = function(n) {
     if(n <= 0) {
       return;
