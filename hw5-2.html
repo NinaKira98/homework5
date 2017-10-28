@@ -1,0 +1,114 @@
+<style>
+  #canvas {
+    border: groove 4px silver;  }
+</style>
+
+<title>Nina Kirakosyan 2nd</title>
+<canvas id='canvas' width = 800 height = 500></canvas>
+
+<script>
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+canvas.width = 800;
+canvas.height = 600;
+
+  
+const rand = function(num) {
+    return Math.floor(Math.random() * num) + 1;
+};
+
+const colorArray = ['#5C4B51', '#8CBEB2', '#F2EBBF', '#F3B562', '#F06060'];
+
+const data = [];
+    
+const bigFunc = function (pts, canvasWidth, canvasHeight) {
+  
+  canvas.width = canvasWidth;
+  canvas.height = canvasHeight;
+
+    //my points
+  const myFunc = function(n) {
+    if(n >= pts) {
+      return;  }      
+    
+    const point = {
+      x: rand(canvas.width - 60),
+      y: rand(canvas.height - 60),
+      width: 60,
+      height: 60,
+      xDelta: rand(10),
+      yDelta: rand(10),
+      color: colorArray[rand(colorArray.length) - 1]
+    };
+    
+    data[n] = point;
+    myFunc(n + 1);
+    return data;
+  };  
+  const prod = myFunc(0);  
+  
+  //drawing this beauty
+  const draw = function() {
+    
+    const forEachDraw = function(ary, i) {
+      if(i >= ary.length-1) {
+        return;
+      }
+
+      ctx.fillStyle = ary[i].color;
+      ctx.fillRect(ary[i].x, ary[i].y, ary[i].width, ary[i].height);
+      forEachDraw(ary, i+1);
+      };
+
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      forEachDraw(prod, 0);      
+  };
+  
+  //updating this piece of shhhhBEAUTY
+  const updateData = function(n) {
+    if(n >= pts) {
+      return;
+    }
+
+    const forEachUpdate = function(n) {
+    
+      if(data[n].x >= canvas.width - 60) {
+        data[n].xDelta = -rand(10);
+        data[n].color = colorArray[rand(colorArray.length) - 1];
+      }
+      if(data[n].x <= 0) {
+        data[n].xDelta = rand(10);
+        data[n].color = colorArray[rand(colorArray.length) - 1];
+      }
+      if(data[n].y >= canvas.height - 60) {
+        data[n].yDelta = -rand(10);
+        data[n].color = colorArray[rand(colorArray.length) - 1];
+      }
+      if(data[n].y <= 0) {
+        data[n].yDelta = rand(10);
+        data[n].color = colorArray[rand(colorArray.length) - 1];
+      }
+      data[n].x = data[n].x + data[n].xDelta;
+      data[n].y = data[n].y + data[n].yDelta;
+    };
+
+    forEachUpdate(n);
+    return updateData(n + 1);
+  };
+  
+  //making sure this BEAUTY never ends
+  const loop = function() {
+    draw();
+    updateData(0);
+    
+    requestAnimationFrame(loop);
+  };
+  loop();
+  
+  };//end of bigFunc HOT MESS
+
+  bigFunc(30, 800, 500);
+
+  //HALLELUJAH
+  //Praise the Lord
+  </script>  

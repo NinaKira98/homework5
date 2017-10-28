@@ -1,0 +1,54 @@
+<style>
+  #canvas {
+    border: groove 4px silver;  }
+</style>
+
+<title>Nina Kirakosyan 1st</title>
+<canvas id='canvas'></canvas>
+ 
+
+<script>
+const createPoints = function(count, canvasWidth, canvasHeight) {
+  
+  if(canvasWidth <= 60 || canvasHeight <= 60) {
+    alert('Set a larger canvas size, please :)');
+    return;
+  }
+  
+  const canvas = document.getElementById('canvas');
+  const ctx = canvas.getContext('2d');
+  canvas.width = canvasWidth;
+  canvas.height = canvasHeight;
+
+  const rand = function(num) {
+    return Math.floor(Math.random() * num) + 1;
+  };
+    
+  const colorArray = ['red', 'blue', 'green', 'yellow', 'orange', 'purple', 'maroon', 'salmon', 'teal'];
+
+  const data = [];
+
+  const myFunc = function(n) {
+    if(n >= count) {
+      return;  }
+     
+    const point = {
+      x: rand(canvasWidth - 60),
+      y: rand(canvasHeight - 60),
+      width: 60,
+      height: 60,
+      xDelta: 1,
+      yDelta:1,
+      color: colorArray[rand(colorArray.length) - 1]
+    };
+    
+    data[n] = point;
+    myFunc(n + 1); 
+    return data;       
+  };
+  
+  myFunc(0);
+};
+      
+createPoints(67, 700, 400);
+</script>   

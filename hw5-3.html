@@ -1,0 +1,188 @@
+<canvas id="canvas" width = 800 height = 500></canvas>
+
+<title>Nina Kirakosyan 3rd</title>
+
+<script>
+const myGame = function(badGuyNum, level) {
+  
+  const canvas = document.getElementById('canvas');
+  const ctx = canvas.getContext('2d');
+  
+  //images and their sources, I hope they don't mind
+  const backImage = new Image();
+  backImage.src = 'https://ak0.picdn.net/shutterstock/videos/12914375/thumb/1.jpg';
+  
+  const bobo = new Image(); //my musipusik
+  bobo.src = 'https://openclipart.org/image/2400px/svg_to_png/270472/floating-alien-with-tentacles-in-the-style-of-Lemmling.png';
+  
+  const badGuyImg = new Image();
+  badGuyImg.src = 'https://openclipart.org/image/2400px/svg_to_png/169675/mathafix-alien.png';
+  
+  const gameOver = new Image();
+  gameOver.src = 'http://i0.kym-cdn.com/entries/icons/mobile/000/014/879/SNAKE!.jpg';
+
+  const rand = function(num) {
+    return Math.floor(Math.random() * num) + 1;
+  };
+  
+  const floorY = canvas.height - 200;
+   
+  const boo = {
+    isPaused: false
+  };
+  
+  const hero = {
+      x: 50,
+      y: floorY,
+      img: bobo,
+      width: 80,
+      height: 120,
+      xD: 0,
+      yD: 0
+    };
+  const maxJump = floorY - (hero.height * 2);
+   
+  const badGuys = function(count) {
+    const badArray = [];
+      const func = function(n) {
+    if(n <= 0) {
+      return;
+    }
+      badArray.push({
+      x: rand(canvas.width - 100),
+      y: rand(canvas.height - 100),
+      img: badGuyImg,
+      width: 80,
+      height: 80,
+      xD: level,
+      yD: level
+  });
+    func(n - 1);
+      };
+      func(count);
+      return badArray;
+  };
+  const badGuy = badGuys(badGuyNum);
+
+  const draw = function() {
+    //bad guys
+    const forEachBad = function(arr, i) {
+      if (i >= arr.length) {
+        return;
+      }
+      ctx.drawImage(arr[i].img, arr[i].x, arr[i].y, arr[i].width, arr[i].height);
+      forEachBad(arr, i + 1);
+      
+    };
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(backImage, 0, 0, canvas.width, canvas.height);
+    //hero
+    ctx.drawImage(hero.img, hero.x, hero.y, hero.width, hero.height);
+    forEachBad(badGuy, 0);
+  };
+  
+  const updateData = function() {
+    //bad guys
+    const forEachUpdateBad = function(arr, i){
+      if(i >= arr.length){
+        return "";
+      }
+
+      if(arr[i].x >= canvas.width - arr[i].width || arr[i].x <= 0){
+        arr[i].xD = -arr[i].xD;
+      }
+      
+      if(arr[i].y >= canvas.height-arr[i].height || arr[i].y<=0){
+        arr[i].yD = -arr[i].yD;
+      }
+
+      arr[i].x = arr[i].x + arr[i].xD;
+      arr[i].y = arr[i].y + arr[i].yD;
+      forEachUpdateBad(arr,i+1);
+    };
+    forEachUpdateBad(badGuy, 0);
+    
+    //hero
+    const updateDataHero = function() {
+    if(hero.yD !== 0) {
+        hero.y = hero.y - hero.yD;
+    if(hero.y <= maxJump) {
+        hero.yD = -hero.yD;        
+    }
+    else if(hero.y >= floorY) {
+        hero.y = floorY;
+        hero.yD = 0;
+      }
+    }
+    };
+    updateDataHero();
+    
+    //start of collision detection
+     const checkEachColl = function(ar, i) {
+       if(i >= ar.length) {
+         return;
+       }
+  
+      if(ar[i].x  + ar[i].width > hero.x && ar[i].x < hero.x + hero.width &&
+         ar[i].y + ar[i].height > hero.y && ar[i].y < hero.y + hero.height) {
+            
+            boo.isPaused = true;
+          }
+          
+      if(ar[i].x + ar[i].width > hero.x && ar[i].x < hero.x + hero.width &&
+         ar[i].y + ar[i].height > hero.y && ar[i].y < hero.y) {
+            
+            boo.isPaused = true;
+          }
+       
+       checkEachColl(ar, i + 1);
+     };
+     
+     checkEachColl(badGuy, 0);
+  };
+  
+  const loop = function() {
+    if(boo.isPaused === true) {
+      ctx.drawImage(gameOver, 0, 0, canvas.width, canvas.height);
+      alert('Game Over BUAHAHA');
+      return;
+    }
+    draw();
+    updateData();
+    
+    requestAnimationFrame(loop);
+  };
+  
+  loop();
+  
+  const leftKey = 37;
+  const upKey = 38;
+  const rightKey = 39;
+  const downKey = 40;
+  const enterKey = 13;
+  
+  document.addEventListener('keydown', function(event) {
+    
+    if(event.keyCode === rightKey) {
+        hero.x = hero.x + 15;
+      if(hero.x >= canvas.width) {
+        hero.x = 0-hero.width;
+      }
+    } 
+    else if(event.keyCode === leftKey) {
+        hero.x = hero.x - 15; 
+      if(hero.x <= 0-hero.width) {
+        hero.x = canvas.width;
+      }     
+    }
+    else if(event.keyCode === upKey) {
+      if(hero.yD === 0) {
+        hero.yD = 8;
+      }      
+    }
+    
+  }, false);
+  
+};
+myGame(3, 2);
+</script>  
